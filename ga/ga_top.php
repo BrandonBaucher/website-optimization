@@ -51,14 +51,38 @@ class ga {
     } // End for
   }
 
-  private function selectParents() 
+  private function selectParent( $population ) 
   {
+    // roulet wheel selection for a single parent, will be called twice for crossover
+    // returns the index of the selected parent
+    
+    var $wheel = array();
+    var $costSum = 0;
+    var $upperBound;
+    var $parentIndex;
 
+    // build 'roulet wheel' by adding fitnesses 
+    for($i=0; $i<$this->popSize; $i++) {
+      $wheel[$i] = costSum + $population->individuals[$i]->fitness;
+      $costSum = costSum + $population->individuals[$i]->fitness; 
+    } // end for
+
+    // randomly select point on wheel
+    $point = ( mt_rand() / mt_getrandmax() ) * $costSum;
+
+    // compute index of the selected point
+    $upperBound = $wheel[0];
+    $parentIndex = 0;
+    while($point > $upperBound) {
+      $parentIndex = $parentIndex + 1;
+      $upperBound = $wheel[$parentIndex];
+    } // end while
+    return $parentIndex;
   }
 
-  private function crossoverParents() 
+  private function crossoverParents($parent0, $parent1) 
   {
-
+    
   }
 
   private function mutatePopulation() 
