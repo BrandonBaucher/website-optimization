@@ -87,8 +87,10 @@ class ga {
     $this->meanClickRate = $success/$total;
   }
 
-  public function updateClickRate($genNumber, $popIndex, $success) 
+  public function updateClickRate($popIndex, $success)
   {
+    $this->population->individuals[$popIndex]->increment($success);
+  }
 
   }
 
