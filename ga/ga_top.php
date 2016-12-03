@@ -29,14 +29,14 @@ class ga {
     var $parent1 = $this.selectPrent();
 
     // cross over
-    $this->nextPopulation = $this->crossover($parent0, $parent1);
+    $this->crossover($parent0, $parent1);
     $this->population = $this->nextPopulation;
 
     $this->mutatePopulation();
   }
 
   private function computeCost() 
-  {
+  {$this->crossover($parent0, $parent1);
     var $stats;
     var $individualClickRate;
     var $cost;
@@ -106,12 +106,13 @@ class ga {
 
   private function crossover($parent0, $parent1) 
   {
+    var $newGenes;
+
     for($i=0; $i<$this->popSize; $i=$i+1)
     {
-
-
-
-    } 
+      $newGenes = singleCrossover($parent0, $parent1);
+      $this->nextPopulation->individual[$i]->resetIndividual($newGenes);
+    } // end for
   }
 
   private function mutatePopulation() 
@@ -120,13 +121,17 @@ class ga {
     {
       // choose random population member
       var $mutantIdx = mt_rand(0,$this->popSize-1);
-
+      var $mutantIndividual = $this->population[$mutantIdx];
       // get gene not in current individual
       // ASSUMING $availPosts IS JUST AN INDEXED ARRAY OF DB IDs  
-      var $newGene = mt_rand(0,count($this->availabePosts)-1);
-
-      // TODO decide if individual should be reset on mutate
-    }
+      var $newGene = mt_rand(0,count($this->availabePosts)-1); // just gets the index
+      $newGene = $this->availablePosts[$newGene];
+      // randomly choose mutant gene index
+      var $geneIdx = mt_rand(0,count($this->population[$mutantIdx]->getGenes()));
+      var $genes = $this->population[$mutantIdx]->getGenes();
+      $genes[$geneIdx] = $newGene;
+      $this->population[$mutantIdx]->resetIndvidual($genes);   
+     } // end if
   }
 
   private function computeMeanClickRate($genNumber) 
