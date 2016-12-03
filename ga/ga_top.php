@@ -5,18 +5,22 @@ class ga {
   var $popSize;
   var $population;
   var $nextPopulation;
-  
+  var $availablePosts; 
   var $currentIndividual; // an index, not an individual class instance
 
   // cost function variables
   var $meanClickRate;
   var $costSlope
-  
-  float $mutationRate = 0.01;
 
-  function __construct($popSize) {
-    // init pop 
+    float $mutationRate = 0.01;
+
+  // init pop 
+  function __construct($popSize{ 
+    $this->updateAvailablePosts();
+    $this->population = new Population($this->availablePosts, $popSize);
+    $this->nextPopulation = $this->population; // quickly init next pop with junk
   }
+
 
   public function genNewPop() {
 
@@ -43,7 +47,7 @@ class ga {
       // x = $individualClickRate - $this->meanClickRate
       // m = costSlope
       // b = 0.5, the midpoint
-   
+
       $cost =(($individualClickRate - $this->meanClickRate) * $this->costSlope) + 0.5;
       if($cost > 1.0) 
       {
@@ -64,7 +68,7 @@ class ga {
   {
     // roulet wheel selection for a single parent, will be called twice for crossover
     // returns the index of the selected parent
-    
+
     var $wheel = array();
     var $costSum = 0;
     var $upperBound;
@@ -89,9 +93,25 @@ class ga {
     return $parentIndex;
   }
 
-  private function crossoverParents($parent0, $parent1) 
+  private function singleCrossover($parent0, $parent1) 
   {
-    
+    var $numGenes = count($parent0->getGenes());
+    // concat parents 
+    var $geneSet = array_unique(array_merge($parent0, $parent1));
+    // pull 3 random genes
+    var $newGenes = array_rand($geneSet, $numGenes);
+    // return new genes
+    return $newGenes
+  } 
+
+  private function crossover($parent0, $parent1) 
+  {
+    for($i=0; $i<$this->popSize; $i=$i+1)
+    {
+
+
+
+    } 
   }
 
   private function mutatePopulation() 
@@ -100,10 +120,10 @@ class ga {
     {
       // choose random population member
       var $mutantIdx = mt_rand(0,$this->popSize-1);
-      
+
       // get gene not in current individual
       // ASSUMING $availPosts IS JUST AN INDEXED ARRAY OF DB IDs  
-      var $newGene = mt_rand(0,count($availPosts)-1);
+      var $newGene = mt_rand(0,count($this->availabePosts)-1);
 
       // TODO decide if individual should be reset on mutate
     }
@@ -112,6 +132,7 @@ class ga {
   private function computeMeanClickRate()
   {
 
+
   }
 
   public function updateClickRate($genNumber, $popIndex, $success) 
@@ -119,5 +140,9 @@ class ga {
 
   }
 
+  private function updateAvailablePosts() {
+    //    $this->availablePosts = /*MAGIC!*/;
+
+  } 
 }// end ga class
 ?>
