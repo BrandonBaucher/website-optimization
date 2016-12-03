@@ -12,8 +12,7 @@ class Individual {
         $this->fitness = 0;
         $this->successClicks = 0;
         $this->totalClicks = 0;
-        //TODO Determine how we want to select starting genes
-        $this->genes = array(1,2,3,4);
+        $this->genes = array_rand( array_flip($availPosts), 3);
     }
 
     function getGenes ()
