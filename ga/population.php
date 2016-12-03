@@ -12,6 +12,7 @@ class Population {
         $this->size = $size;
         $this->individuals = array_pad($this->individuals,$size, new Individual);
         for ($i=0; $i<$size; ++$i){
+            $this->individuals[$i] = new Individual;
             $this->individuals[$i]->createIndividual( $availablePosts );
         }
     }
