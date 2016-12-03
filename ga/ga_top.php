@@ -76,9 +76,15 @@ class ga {
     }
   }
 
-  private function computeMeanClickRate() 
+  private function computeMeanClickRate($genNumber) 
   {
-
+    $success = 0;
+    $total = 0;
+    for($i=0;i<count($this->population->individuals);$i++){
+      $success += $this->population->individuals[$i]->getStats()[0];
+      $total += $this->population->individuals[$i]->getStats()[1];
+    }
+    $this->meanClickRate = $success/$total;
   }
 
   public function updateClickRate($genNumber, $popIndex, $success) 
