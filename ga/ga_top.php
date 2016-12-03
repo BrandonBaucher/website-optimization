@@ -2,15 +2,15 @@
 
 class ga {
 
-  int $popSize;
+  var $popSize;
   var $population;
   var $nextPopulation;
   
-  int $currentIndividual; // an index, not an individual class instance
+  var $currentIndividual; // an index, not an individual class instance
 
   // cost function variables
-  int $meanClickRate;
-  int $costSlope
+  var $meanClickRate;
+  var $costSlope
   
   float $mutationRate = 0.01;
 
@@ -19,7 +19,16 @@ class ga {
   }
 
   public function genNewPop() {
+
+    // select two parents
+    var $parent0 = $this.selectPrent();
+    var $parent1 = $this.selectPrent();
+
     // cross over
+    $this->nextPopulation = $this->crossover($parent0, $parent1);
+    $this->population = $this->nextPopulation;
+
+    $this->mutatePopulation();
   }
 
   private function computeCost() 
@@ -29,7 +38,7 @@ class ga {
     var $cost;
 
     for ($i=0; $i<$this->popSize; $i++) { 
-      $stats = $this->population.getIndividual($i).getStats();
+      $stats = $this->population->getIndividual($i).getStats();
       $individualClickRate = floatval(stats[0])/floatval(stats[1]);
       // x = $individualClickRate - $this->meanClickRate
       // m = costSlope
@@ -51,7 +60,7 @@ class ga {
     } // End for
   }
 
-  private function selectParent( $population ) 
+  private function selectParent() 
   {
     // roulet wheel selection for a single parent, will be called twice for crossover
     // returns the index of the selected parent
@@ -63,17 +72,17 @@ class ga {
 
     // build 'roulet wheel' by adding fitnesses 
     for($i=0; $i<$this->popSize; $i++) {
-      $wheel[$i] = costSum + $population->individuals[$i]->fitness;
-      $costSum = costSum + $population->individuals[$i]->fitness; 
+      $wheel[$i] = costSum + $this->population->individuals[$i]->fitness;
+      $costSum = costSum + $this->population->individuals[$i]->fitness; 
     } // end for
 
-    // randomly select point on wheel
-    $point = ( mt_rand() / mt_getrandmax() ) * $costSum;
+    // randomly select povar on wheel
+    $povar = ( mt_rand() / mt_getrandmax() ) * $costSum;
 
     // compute index of the selected point
     $upperBound = $wheel[0];
     $parentIndex = 0;
-    while($point > $upperBound) {
+    while($povar > $upperBound) {
       $parentIndex = $parentIndex + 1;
       $upperBound = $wheel[$parentIndex];
     } // end while
@@ -90,17 +99,17 @@ class ga {
     if (mt_rand() / mt_getrandmax() < $this->mutationRate) 
     {
       // choose random population member
-      int $mutantIdx = mt_rand(0,$this->popSize-1);
+      var $mutantIdx = mt_rand(0,$this->popSize-1);
       
       // get gene not in current individual
+      // ASSUMING $availPosts IS JUST AN INDEXED ARRAY OF DB IDs  
+      var $newGene = mt_rand(0,count($availPosts)-1);
 
-      
-
-      // reset individual
+      // TODO decide if individual should be reset on mutate
     }
   }
 
-  private function computeMeanClickRate() 
+  private function computeMeanClickRate()
   {
 
   }
