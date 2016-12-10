@@ -117,7 +117,10 @@ class ga {
       // select two parents
       $parent0 = $this->selectParent();
       $parent1 = $this->selectParent();
-      while($parent0->getGenes()==$parent1->getGenes()) {
+      for($j=0; $j<10; $j=$j+1) {
+        if($parent0->getGenes()!=$parent1->getGenes()) {
+          break;
+        }
         $parent1 = $this->selectParent();
       }
       $newGenes = $this->singleCrossover($parent0, $parent1);
