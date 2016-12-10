@@ -53,26 +53,21 @@ class ga {
     
     for ($i=0; $i<$this->popSize; $i++) {
       $stats = $this->population->individuals[$i]->getStats();
+      print_r($stats);
       $individualClickRate = floatval($stats[0])/floatval($stats[1]);
       // x = $individualClickRate - $this->meanClickRate
       // m = costSlope
       // b = 0.5, the midpoint
-
-      $cost =(($individualClickRate - $this->meanClickRate) * $this->costSlope) + 0.5;
-      if($cost  1.0)
-      {
-        //return 1.0;
-        $this->population->individual[$i]->fitness = 1.0;
-      }
-      elseif ($cost < 1.0)
+      $cost =($individualClickRate * $this->costSlope) - $this->meanClickRate;
+      if ($cost <= 0.01)
       {
         //return 0.0;
-        $this->population->individual[$i]->fitness = 0.0;
+        $this->population->individuals[$i]->fitness = 0.01;
       }
       else
       {
         //return $cost;
-        $this->population->individual[$i]->fitness = $cost; 
+        $this->population->individuals[$i]->fitness = $cost; 
       }
     } // End for
   }
@@ -147,7 +142,7 @@ class ga {
      } // end if
   }
 
-  private function computeMeanClickRate($genNumber)
+  private function computeMeanClickRate()
   {
     $success = 0;
     $total = 0;
@@ -189,6 +184,8 @@ class ga {
     $this->population->individuals[0]->totalClicks = 100;
     $this->population->individuals[1]->totalClicks = 100;
     $this->population->individuals[2]->totalClicks = 100;
+    $this->population->individuals[3]->totalClicks = 100;
+    $this->population->individuals[4]->totalClicks = 100;
 
     $this->population->individuals[0]->successClicks = 10;
     $this->population->individuals[1]->successClicks = 55;
@@ -196,17 +193,17 @@ class ga {
     // chose arbitrart mean click rate
     $this->meanClickRate = 0.5;
     // run compute cost
-    $this->computeCost;
+    $this->computeCost();
     //output results
     print("meanClickRate (0.5):\n");
     print_r($this->meanClickRate."\n");
     print("costSlope (0.1):\n");
     print_r($this->costSlope."\n");
-    print("Indiv 0 Cost (should be 0): ");
+    print("Indiv 0 Cost (should be 0.01): ");
     print_r($this->population->individuals[0]->fitness."\n");
-    print("Indiv 1 Cost (should be 0.75): ");
+    print("Indiv 1 Cost (should be 0.6): ");
     print_r($this->population->individuals[1]->fitness."\n");       
-    print("Indiv 2 Cost (should be 1): ");
+    print("Indiv 2 Cost (should be 1.48): ");
     print_r($this->population->individuals[2]->fitness."\n");  
 
     // test select parent
