@@ -15,8 +15,7 @@ class ga {
 
   // cost function variables
   var $meanClickRate;
-  var $costSlope = 1.0/10; // shoul give a linear region of 20
-
+  var $costSlope = 2; 
   var $mutationRate = 0.01;
 
   // init pop
@@ -44,20 +43,23 @@ class ga {
     $this->mutatePopulation();
   }
 
-  private function computeCost()
+  private function computeCost() {
     $stats;
     $individualClickRate;
     $cost;
-
+    
+    // update mean click rate
+    $this->computeMeanClickRate();
+    
     for ($i=0; $i<$this->popSize; $i++) {
       $stats = $this->population->individuals[$i]->getStats();
-      $individualClickRate = floatval(stats[0])/floatval(stats[1]);
+      $individualClickRate = floatval($stats[0])/floatval($stats[1]);
       // x = $individualClickRate - $this->meanClickRate
       // m = costSlope
       // b = 0.5, the midpoint
 
       $cost =(($individualClickRate - $this->meanClickRate) * $this->costSlope) + 0.5;
-      if($cost > 1.0)
+      if($cost  1.0)
       {
         //return 1.0;
         $this->population->individual[$i]->fitness = 1.0;
@@ -167,35 +169,45 @@ class ga {
     //foreach ($results as &$curr){
     //  $this->availablePosts[] = $curr->term_id;
     //}
-    $this->availablePosts = array(1,2,3,4,5,6,7,8);/*MAGIC!*/;
+    $this->availablePosts = range(1,100);/*MAGIC!*/;
   }
 
   public function unitTest()
   {
     // test constructor
-    
+    print("Testing Constructor\n");
+    print("popSize (should be 5): ");
+    print_r($this->popSize."\n");
+    print("avaliable posts (should be 1-8): \n");
+    print_r($this->availablePosts);
+    print("population\n");
+    print_r($this->population->individuals);
     
     // test compute cost
-    print("Testing Compute Cost");
+    print("Testing Compute Cost\n");
     // set arbitrary click rate on individuals
-    $this->population->individual[0]->totalClicks = 100;
-    $this->population->individual[1]->totalClicks = 100;
-    $this->population->individual[2]->totalClicks = 100;
+    $this->population->individuals[0]->totalClicks = 100;
+    $this->population->individuals[1]->totalClicks = 100;
+    $this->population->individuals[2]->totalClicks = 100;
 
-    $this->population->individual[0]->successClicks = 10;
-    $this->population->individual[1]->successClicks = 55;
-    $this->population->individual[2]->successClicks = 99;
+    $this->population->individuals[0]->successClicks = 10;
+    $this->population->individuals[1]->successClicks = 55;
+    $this->population->individuals[2]->successClicks = 99;
     // chose arbitrart mean click rate
-    $this->meanClickRate = 50;
+    $this->meanClickRate = 0.5;
     // run compute cost
     $this->computeCost;
     //output results
-    print("Indiv 0 Cost (should be 0):\n");
-    print_r($this->population->individual[0]->fitness);
-    print("Indiv 1 Cost (should be 0.75):\n");
-    print_r($this->population->individual[1]->fitness);       
-    print("Indiv 2 Cost (should be 1):\n");
-    print_r($this->population->individual[2]->fitness);  
+    print("meanClickRate (0.5):\n");
+    print_r($this->meanClickRate."\n");
+    print("costSlope (0.1):\n");
+    print_r($this->costSlope."\n");
+    print("Indiv 0 Cost (should be 0): ");
+    print_r($this->population->individuals[0]->fitness."\n");
+    print("Indiv 1 Cost (should be 0.75): ");
+    print_r($this->population->individuals[1]->fitness."\n");       
+    print("Indiv 2 Cost (should be 1): ");
+    print_r($this->population->individuals[2]->fitness."\n");  
 
     // test select parent
 
