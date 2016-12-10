@@ -33,8 +33,8 @@ class ga {
     $this->computeCost();
 
     // select two parents
-    $parent0 = $this.selectPrent();
-    $parent1 = $this.selectPrent();
+    $parent0 = $this->selectParent();
+    $parent1 = $this->selectParent();
 
     // cross over
     $this->crossover($parent0, $parent1);
@@ -98,14 +98,16 @@ class ga {
       $parentIndex = $parentIndex + 1;
       $upperBound = $wheel[$parentIndex];
     } // end while
-    return $parentIndex;
+    return $this->population->individuals[$parentIndex];
   }
 
   private function singleCrossover($parent0, $parent1)
   {
+    print_r($parent0);
+    print_r($parent1);
     $numGenes = count($parent0->getGenes());
     // concat parents
-    $geneSet = array_unique(array_merge($parent0, $parent1));
+    $geneSet = array_unique(array_merge($parent0->getGenes(), $parent1->getGenes()));
     // pull 3 random genes
     $newGenes = array_rand($geneSet, $numGenes);
     // return new genes
@@ -118,8 +120,8 @@ class ga {
 
     for($i=0; $i<$this->popSize; $i=$i+1)
     {
-      $newGenes = singleCrossover($parent0, $parent1);
-      $this->nextPopulation->individual[$i]->resetIndividual($newGenes);
+      $newGenes = $this->singleCrossover($parent0, $parent1);
+      $this->nextPopulation->individuals[$i]->resetIndividual($newGenes);
     } // end for
   }
 
@@ -190,38 +192,50 @@ class ga {
     $this->population->individuals[0]->successClicks = 10;
     $this->population->individuals[1]->successClicks = 55;
     $this->population->individuals[2]->successClicks = 99;
+    $this->population->individuals[3]->successClicks = 10;
+    $this->population->individuals[4]->successClicks = 10;
     // chose arbitrart mean click rate
     $this->meanClickRate = 0.5;
     // run compute cost
     $this->computeCost();
     //output results
-    print("meanClickRate (0.5):\n");
+    print("meanClickRate (~0.5):\n");
     print_r($this->meanClickRate."\n");
-    print("costSlope (0.1):\n");
+    print("costSlope (2):\n");
     print_r($this->costSlope."\n");
     print("Indiv 0 Cost (should be 0.01): ");
     print_r($this->population->individuals[0]->fitness."\n");
-    print("Indiv 1 Cost (should be 0.6): ");
+    print("Indiv 1 Cost (should be ~0.6): ");
     print_r($this->population->individuals[1]->fitness."\n");       
-    print("Indiv 2 Cost (should be 1.48): ");
+    print("Indiv 2 Cost (should be ~1.48): ");
     print_r($this->population->individuals[2]->fitness."\n");  
 
     // test select parent
+    print("\n\nTesting Select Parent\n");
+    $this->selectParent();
 
     // test crossover
-
+    print("\n\nTesting Crossover\n");
+    $this->crossover($this->population->individuals[0],$this->population->individuals[1]);
     // test mutate
+    print("\n\nTesting Mutate\n");
+    $this->mutatePopulation();
 
     // test compute mean click rate
+    print("\n\nTesting Compute Mean Click Rate\n");
      for($i=0;$i<1000;$i++){
       $this->updateClickRate(mt_rand(0,$this->popSize-1),mt_rand(0,1));
     }
     $this->computeMeanClickRate(0);
     print("Mean click rate: ");
     print($this->meanClickRate);
-    print("\n");   // test update click rate 
+    print("\n");
+    // test update click rate 
+    $this->updateClickRate(0,1);
     // test update available posts
-
+    $this->updateAvailablePosts();
+    // test gen new pop
+    $this->genNewPop();
 
   }
 
