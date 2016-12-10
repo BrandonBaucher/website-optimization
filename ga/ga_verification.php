@@ -22,7 +22,7 @@ for($i=0;$i<$NUM_GEN;$i++){
 
   }
   print($myGa->meanClickRate."\n");
-  saveTimeStep( $ga );
+  saveTimeStep( $myGa );
   $myGa->genNewPop();
 }
 
@@ -33,7 +33,7 @@ function saveTimeStep( $ga )
   foreach($ga->population->individuals as &$curr){
     $genes[] = $curr->getGenes();
   }
-  fprinf($fd,'%d',$ga->meanClickRate);
+  fprintf($fd,'%d',$ga->meanClickRate);
   fclose($fd);
 }
 
