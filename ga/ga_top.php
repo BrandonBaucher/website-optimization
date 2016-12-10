@@ -12,7 +12,7 @@ class ga {
 
   // cost function variables
   var $meanClickRate;
-  var $costSlope;
+  var $costSlope = 1.0/10; // shoul give a linear region of 20
 
   var $mutationRate = 0.01;
 
@@ -26,6 +26,9 @@ class ga {
 
 
   public function genNewPop() {
+    
+    // compute cost of current pop
+    $this->computeCost();
 
     // select two parents
     $parent0 = $this.selectPrent();
@@ -39,7 +42,6 @@ class ga {
   }
 
   private function computeCost()
-  {$this->crossover($parent0, $parent1);
     $stats;
     $individualClickRate;
     $cost;
@@ -54,15 +56,18 @@ class ga {
       $cost =(($individualClickRate - $this->meanClickRate) * $this->costSlope) + 0.5;
       if($cost > 1.0)
       {
-        return 1.0;
+        //return 1.0;
+        $this->population->individual[$i]->fitness = 1.0;
       }
       elseif ($cost < 1.0)
       {
-        return 0.0;
+        //return 0.0;
+        $this->population->individual[$i]->fitness = 0.0;
       }
       else
       {
-        return $cost;
+        //return $cost;
+        $this->population->individual[$i]->fitness = $cost; 
       }
     } // End for
   }
@@ -159,13 +164,48 @@ class ga {
 
   public function unitTest()
   {
-    for($i=0;$i<1000;$i++){
+    // test constructor
+    
+    
+    // test compute cost
+    print("Testing Compute Cost");
+    // set arbitrary click rate on individuals
+    $this->population->individual[0]->totalClicks = 100;
+    $this->population->individual[1]->totalClicks = 100;
+    $this->population->individual[2]->totalClicks = 100;
+
+    $this->population->individual[0]->successClicks = 10;
+    $this->population->individual[1]->successClicks = 55;
+    $this->population->individual[2]->successClicks = 99;
+    // chose arbitrart mean click rate
+    $this->meanClickRate = 50;
+    // run compute cost
+    $this->computeCost;
+    //output results
+    print("Indiv 0 Cost (should be 0):\n");
+    print_r($this->population->individual[0]->fitness);
+    print("Indiv 1 Cost (should be 0.75):\n");
+    print_r($this->population->individual[1]->fitness);       
+    print("Indiv 2 Cost (should be 1):\n");
+    print_r($this->population->individual[2]->fitness);  
+
+    // test select parent
+
+    // test crossover
+
+    // test mutate
+
+    // test compute mean click rate
+     for($i=0;$i<1000;$i++){
       $this->updateClickRate(mt_rand(0,$this->popSize-1),mt_rand(0,1));
     }
     $this->computeMeanClickRate(0);
     print("Mean click rate: ");
     print($this->meanClickRate);
-    print("\n");
+    print("\n");   // test update click rate 
+    // test update available posts
+
+
   }
 
 }// end ga class
