@@ -39,9 +39,12 @@ function saveTimeStep( $ga )
   $fd = fopen( 'out.csv', 'a'); 
   $genes = [];
   foreach($ga->population->individuals as &$curr){
-    $genes[] = $curr->getGenes();
+    $genes[] = $curr->getGenes()[0];
+    $genes[] = $curr->getGenes()[1];
+    $genes[] = $curr->getGenes()[2];
   }
-  fprintf($fd,'%d',$ga->meanClickRate);
+  fprintf($fd,'%f,',$ga->meanClickRate);
+  fputcsv($fd,$genes);
   fclose($fd);
 }
 
