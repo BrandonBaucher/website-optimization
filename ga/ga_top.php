@@ -23,7 +23,7 @@ class ga {
     $this->popSize = $popSize;
     $this->updateAvailablePosts();
     $this->population = new Population($this->availablePosts, $popSize);
-    $this->nextPopulation = $this->population; // quickly init next pop with junk
+    $this->nextPopulation = new Population($this->availablePosts, $popSize);
   }
 
 
@@ -39,6 +39,7 @@ class ga {
     // cross over
     $this->crossover($parent0, $parent1);
     $this->population = $this->nextPopulation;
+    $this->nextPopulation = new Population($this->availablePosts, $popSize);
 
     $this->mutatePopulation();
   }
@@ -53,7 +54,6 @@ class ga {
     
     for ($i=0; $i<$this->popSize; $i++) {
       $stats = $this->population->individuals[$i]->getStats();
-      print_r($stats);
       $individualClickRate = floatval($stats[0])/floatval($stats[1]);
       // x = $individualClickRate - $this->meanClickRate
       // m = costSlope
@@ -103,8 +103,6 @@ class ga {
 
   private function singleCrossover($parent0, $parent1)
   {
-    print_r($parent0);
-    print_r($parent1);
     $numGenes = count($parent0->getGenes());
     // concat parents
     $geneSet = array_unique(array_merge($parent0->getGenes(), $parent1->getGenes()));
@@ -134,7 +132,7 @@ class ga {
       $mutantIndividual = $this->population->individuals[$mutantIdx];
       // get gene not in current individual
       // ASSUMING $availPosts IS JUST AN INDEXED ARRAY OF DB IDs
-      $newGene = mt_rand(0,count($this->availabePosts)-1); // just gets the index
+      $newGene = mt_rand(0,count($this->availablePosts)-1); // just gets the index
       $newGene = $this->availablePosts[$newGene];
       // randomly choose mutant gene index
       $geneIdx = mt_rand(0,count($this->population->individuals[$mutantIdx]->getGenes()));
