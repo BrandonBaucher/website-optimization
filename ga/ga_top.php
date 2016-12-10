@@ -84,8 +84,8 @@ class ga {
 
     // build 'roulet wheel' by adding fitnesses
     for($i=0; $i<$this->popSize; $i++) {
-      $wheel[$i] = costSum + $this->population->individuals[$i]->fitness;
-      $costSum = costSum + $this->population->individuals[$i]->fitness;
+      $wheel[$i] = $costSum + $this->population->individuals[$i]->fitness;
+      $costSum = $costSum + $this->population->individuals[$i]->fitness;
     } // end for
 
     // randomly select povar on wheel
@@ -131,16 +131,16 @@ class ga {
     {
       // choose random population member
       $mutantIdx = mt_rand(0,$this->popSize-1);
-      $mutantIndividual = $this->population[$mutantIdx];
+      $mutantIndividual = $this->population->individuals[$mutantIdx];
       // get gene not in current individual
       // ASSUMING $availPosts IS JUST AN INDEXED ARRAY OF DB IDs
       $newGene = mt_rand(0,count($this->availabePosts)-1); // just gets the index
       $newGene = $this->availablePosts[$newGene];
       // randomly choose mutant gene index
-      $geneIdx = mt_rand(0,count($this->population[$mutantIdx]->getGenes()));
-      $genes = $this->population[$mutantIdx]->getGenes();
+      $geneIdx = mt_rand(0,count($this->population->individuals[$mutantIdx]->getGenes()));
+      $genes = $this->population->individuals[$mutantIdx]->getGenes();
       $genes[$geneIdx] = $newGene;
-      $this->population[$mutantIdx]->resetIndvidual($genes);
+      $this->population->individuals[$mutantIdx]->resetIndividual($genes);
      } // end if
   }
 
@@ -195,7 +195,7 @@ class ga {
     $this->population->individuals[3]->successClicks = 10;
     $this->population->individuals[4]->successClicks = 10;
     // chose arbitrart mean click rate
-    $this->meanClickRate = 0.5;
+    //$this->meanClickRate = 0.5;
     // run compute cost
     $this->computeCost();
     //output results
@@ -209,17 +209,28 @@ class ga {
     print_r($this->population->individuals[1]->fitness."\n");       
     print("Indiv 2 Cost (should be ~1.48): ");
     print_r($this->population->individuals[2]->fitness."\n");  
+    print_r($this->population->individuals[3]->fitness."\n");  
+    print_r($this->population->individuals[4]->fitness."\n");  
 
     // test select parent
     print("\n\nTesting Select Parent\n");
-    $this->selectParent();
+    $hist = array();
+    for($i=0; $i<$this->popSize; $i=$i+1){
+      $hist[strval($this->population->individuals[$i]->fitness)] = 0;
+    }
 
+    for($i=0; $i<1000; $i+=1) {
+      $parent = $this->selectParent();
+      $hist[strval($parent->fitness)] += 1;
+    }
+
+    print_r($hist); 
     // test crossover
     print("\n\nTesting Crossover\n");
-    $this->crossover($this->population->individuals[0],$this->population->individuals[1]);
+    //$this->crossover($this->population->individuals[0],$this->population->individuals[1]);
     // test mutate
     print("\n\nTesting Mutate\n");
-    $this->mutatePopulation();
+    //$this->mutatePopulation();
 
     // test compute mean click rate
     print("\n\nTesting Compute Mean Click Rate\n");
@@ -231,11 +242,11 @@ class ga {
     print($this->meanClickRate);
     print("\n");
     // test update click rate 
-    $this->updateClickRate(0,1);
+    //$this->updateClickRate(0,1);
     // test update available posts
-    $this->updateAvailablePosts();
+    //$this->updateAvailablePosts();
     // test gen new pop
-    $this->genNewPop();
+    //$this->genNewPop();
 
   }
 
