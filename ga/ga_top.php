@@ -32,14 +32,10 @@ class ga {
     // compute cost of current pop
     $this->computeCost();
 
-    // select two parents
-    $parent0 = $this->selectParent();
-    $parent1 = $this->selectParent();
-
     // cross over
-    $this->crossover($parent0, $parent1);
+    $this->crossover();
     $this->population = $this->nextPopulation;
-    $this->nextPopulation = new Population($this->availablePosts, $popSize);
+    $this->nextPopulation = new Population($this->availablePosts, $this->popSize);
 
     $this->mutatePopulation();
   }
@@ -107,17 +103,23 @@ class ga {
     // concat parents
     $geneSet = array_unique(array_merge($parent0->getGenes(), $parent1->getGenes()));
     // pull 3 random genes
-    $newGenes = array_rand($geneSet, $numGenes);
+    $newGenes = array_rand(array_flip($geneSet), $numGenes);
     // return new genes
     return $newGenes;
   }
 
-  private function crossover($parent0, $parent1)
+  private function crossover()
   {
     $newGenes;
 
     for($i=0; $i<$this->popSize; $i=$i+1)
     {
+      // select two parents
+      $parent0 = $this->selectParent();
+      $parent1 = $this->selectParent();
+      while($parent0->getGenes()==$parent1->getGenes()) {
+        $parent1 = $this->selectParent();
+      }
       $newGenes = $this->singleCrossover($parent0, $parent1);
       $this->nextPopulation->individuals[$i]->resetIndividual($newGenes);
     } // end for
@@ -135,7 +137,7 @@ class ga {
       $newGene = mt_rand(0,count($this->availablePosts)-1); // just gets the index
       $newGene = $this->availablePosts[$newGene];
       // randomly choose mutant gene index
-      $geneIdx = mt_rand(0,count($this->population->individuals[$mutantIdx]->getGenes()));
+      $geneIdx = mt_rand(0,count($this->population->individuals[$mutantIdx]->getGenes())-1);
       $genes = $this->population->individuals[$mutantIdx]->getGenes();
       $genes[$geneIdx] = $newGene;
       $this->population->individuals[$mutantIdx]->resetIndividual($genes);
@@ -224,11 +226,27 @@ class ga {
 
     print_r($hist); 
     // test crossover
+    print("Testing Single Crossover\n");
+    $newGenes = $this->singleCrossover($this->population->individuals[0],$this->population->individuals[1]);
+    print_r($this->population->individuals[0]);
+    print_r($this->population->individuals[1]);
+    print_r($newGenes);
+
     print("\n\nTesting Crossover\n");
-    //$this->crossover($this->population->individuals[0],$this->population->individuals[1]);
+    $this->crossover($this->population->individuals[0],$this->population->individuals[1]);
+    print_r($this->population->individuals[0]->getGenes());
+    print_r($this->population->individuals[1]->getGenes());
+    print_r($this->population->individuals[2]->getGenes());
+    print_r($this->nextPopulation->individuals[0]->getGenes());
+    print_r($this->nextPopulation->individuals[1]->getGenes());
+    print_r($this->nextPopulation->individuals[2]->getGenes());
+
     // test mutate
     print("\n\nTesting Mutate\n");
-    //$this->mutatePopulation();
+    print_r($this->population->individuals);
+    $this->mutationRate = 2;
+    $this->mutatePopulation();
+    print_r($this->population->individuals);
 
     // test compute mean click rate
     print("\n\nTesting Compute Mean Click Rate\n");
@@ -240,11 +258,18 @@ class ga {
     print($this->meanClickRate);
     print("\n");
     // test update click rate 
-    //$this->updateClickRate(0,1);
+    print("testing update click rate\n");
+    print("before: ");
+    print_r($this->population->individuals[0]->getStats());
+    $this->updateClickRate(0,1);
+    $this->updateClickRate(0,0);
+    print("after: ");
+    print_r($this->population->individuals[0]->getStats());
+
     // test update available posts
-    //$this->updateAvailablePosts();
+    $this->updateAvailablePosts();
     // test gen new pop
-    //$this->genNewPop();
+    $this->genNewPop();
 
   }
 
