@@ -2,6 +2,9 @@
 
 include 'population.php';
 
+//Needed for database connection
+//include './wp-load.php';
+
 class ga {
 
   var $popSize;
@@ -159,6 +162,11 @@ class ga {
   }
 
   private function updateAvailablePosts() {
+    $this->availablePosts = [];
+    //$results = wp_terms('category');
+    //foreach ($results as &$curr){
+    //  $this->availablePosts[] = $curr->term_id;
+    //}
     $this->availablePosts = array(1,2,3,4,5,6,7,8);/*MAGIC!*/;
   }
 
