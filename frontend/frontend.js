@@ -1,9 +1,9 @@
 $(document).ready(function(){
      $("#related").click(function(){
-        $.post("http://localhost:8080/",
+        $.post("http://localhost:8080/",//Change localhost for wordpress site
         {
           'action': 'my_action',
-          'related': "true"
+          'related': "true",
           'individual': 0,//update code for Id
         },
         function(){
@@ -11,10 +11,10 @@ $(document).ready(function(){
         //alert("post sent");
     });
    $("#unrelated").click(function(){
-        $.post("http://localhost:8080/",
+        $.post("http://localhost:8080/",//Change localhost for wordpress site
         {
           'action': 'my_action',
-          'related': "false"
+          'related': "false",
           'individual': 0,//update code for Id
         },
         function(){
