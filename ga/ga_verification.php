@@ -3,7 +3,7 @@
 include 'ga_top.php';
 
 $NUM_GEN = 100;
-$SUCCESS_VAL = 2;
+$SUCCESS_VAL = 30;
 
 $fd = fopen ('out.csv', 'w');
 fclose($fd);

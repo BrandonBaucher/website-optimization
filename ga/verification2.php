@@ -7,18 +7,18 @@ $SUCCESS_VAL = 500;
 
 $fd = fopen ('out.csv', 'w');
 fclose($fd);
-$myGa = new ga(20);
+$myGa = new ga(10);
 for($i=0;$i<$NUM_GEN;$i++){
   for($popIndex=0;$popIndex<count($myGa->population->individuals);$popIndex++){
     $genes = $myGa->population->individuals[$popIndex]->getGenes();
     $dist = 0;
     for($j=0;$j<3;$j++){
-      $dist += abs($genes[$j] - $SUCCESS_VAL);
+      $dist += pow(abs($genes[$j] - $SUCCESS_VAL),2);
     }
     $dist /= 3;
-
+    $dist = sqrt($dist);
     for($j=0;$j<10000;$j++){
-      if(mt_rand()/mt_getrandmax() < (0.9 - 0.8*$dist/1000.0))//TODO why doesn't this work.......
+      if(mt_rand()/mt_getrandmax() < (0.9 - 0.8*$dist/500.0))//TODO why doesn't this work.......
         $bool = True;
       else
         $bool = False;

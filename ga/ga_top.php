@@ -16,7 +16,7 @@ class ga {
   // cost function variables
   var $meanClickRate;
   var $costSlope = 2; 
-  var $mutationRate = 0.01;
+  var $mutationRate = 0.1;
 
   // init pop
   function __construct($popSize){
@@ -111,9 +111,15 @@ class ga {
   private function crossover()
   {
     $newGenes;
-
+    
+    $bestIdx = 0;
+    $bestFitness = -10000000;
     for($i=0; $i<$this->popSize; $i=$i+1)
     {
+      if($this->population->individuals[$i]->fitness > $bestFitness) {
+        $bestIdx = $i;
+        $bestFitness = $this->population->individuals[$i]->fitness;
+      }
       // select two parents
       $parent0 = $this->selectParent();
       $parent1 = $this->selectParent();
@@ -126,6 +132,7 @@ class ga {
       $newGenes = $this->singleCrossover($parent0, $parent1);
       $this->nextPopulation->individuals[$i]->resetIndividual($newGenes);
     } // end for
+    $this->nextPopulation->individuals[0] = $this->population->individuals[$bestIdx];
   }
 
   private function mutatePopulation()
@@ -169,7 +176,7 @@ class ga {
     //foreach ($results as &$curr){
     //  $this->availablePosts[] = $curr->term_id;
     //}
-    $this->availablePosts = range(1,100);/*MAGIC!*/;
+    $this->availablePosts = range(1,1000);/*MAGIC!*/;
   }
 
   public function unitTest()
